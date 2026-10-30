@@ -12,7 +12,13 @@ export function createApp({ store, config }) {
   app.set('views', 'views');
   app.set('trust proxy', 1);
   app.disable('x-powered-by');
-  app.use(helmet());
+  app.use(helmet({
+    contentSecurityPolicy: {
+      directives: {
+        formAction: ["'self'", new URL(config.issuer).origin]
+      }
+    }
+  }));
   app.use(express.static('public'));
   app.use(express.json({ limit: '16kb' }));
   app.use(express.urlencoded({ extended: false, limit: '16kb' }));
