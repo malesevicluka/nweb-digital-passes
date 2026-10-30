@@ -1,0 +1,17 @@
+extends layout
+
+block content
+  h1 Podaci propusnice
+  dl
+    dt Ime i prezime
+    dd= pass.name
+    dt Oznaka dokumenta
+    dd= pass.document
+    dt Vrijeme izdavanja
+    dd= formatDate(pass.issuedAt)
+    dt Status
+    dd(class=pass.status === 'ACTIVE' ? 'active' : 'cancelled')= pass.status
+    dt Identifikator
+    dd= pass.id
+  p
+    a(href="/") Povratak na početnu

@@ -1,0 +1,51 @@
+extends layout
+
+block content
+  h1 Digitalne propusnice
+
+  if authenticated
+    p Prijavljeni korisnik: #{user.email || user.name}
+    form(method="post" action="/logout")
+      input(type="hidden" name="_csrf" value=csrfToken)
+      button(type="submit") Odjava
+  else
+    p
+      a(href="/login") Prijava
+
+  section.counts
+    p Ukupno propusnica: #{counts.total}
+    p Aktivne propusnice: #{counts.active}
+
+  if authenticated
+    h2 Popis propusnica
+    if passes.length === 0
+      p Nema izdanih propusnica.
+    else
+      .table-container
+        table
+          thead
+            tr
+              th Ime i prezime
+              th Dokument
+              th Vrijeme izdavanja
+              th Status
+              th Radnje
+          tbody
+            each pass in passes
+              tr
+                td
+                  a(href='/info/' + pass.id)= pass.name
+                td= pass.document
+                td= formatDate(pass.issuedAt)
+                td(class=pass.status === 'ACTIVE' ? 'active' : 'cancelled')= pass.status
+                td
+                  .actions
+                    if pass.status === 'ACTIVE'
+                      form(method="post" action='/manage/' + pass.id + '/cancel')
+                        input(type="hidden" name="_csrf" value=csrfToken)
+                        button(type="submit") Poništi
+                    form(method="post" action='/manage/' + pass.id + '/delete')
+                      input(type="hidden" name="_csrf" value=csrfToken)
+                      button(type="submit") Obriši
+  else
+    p Za pregled, poništavanje i brisanje propusnica potrebna je prijava.
